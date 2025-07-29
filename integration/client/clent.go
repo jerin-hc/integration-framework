@@ -26,6 +26,14 @@ func Init() *Clent {
 	}
 }
 
+func InitDemo(path string) *Clent {
+	jsoncodec.Init()
+	os.Setenv("TF_RUNTASK_MAGIC_COOKIE", "5c3e2dc2f6b7701f988703046fdbc24eb2e4689f3a81c6af1037d41b8eb063c8")
+	return &Clent{
+		path: path,
+	}
+}
+
 func (s *Clent) RunTask(ctx context.Context, event schema.Event, integrationPlugin string) (*schema.Response, error) {
 	pluginPath := fmt.Sprintf(s.path, integrationPlugin)
 
