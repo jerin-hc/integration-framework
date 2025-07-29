@@ -22,11 +22,11 @@ func Init() *Clent {
 	jsoncodec.Init()
 	os.Setenv("TF_RUNTASK_MAGIC_COOKIE", "5c3e2dc2f6b7701f988703046fdbc24eb2e4689f3a81c6af1037d41b8eb063c8")
 	return &Clent{
-		path: "/home/tfc-agent/integration/terraform-%s",
+		path: "/home/tfc-agent/integration/terraform-%v",
 	}
 }
 
-func InitDemo(path string) *Clent {
+func InitDevelop(path string) *Clent {
 	jsoncodec.Init()
 	os.Setenv("TF_RUNTASK_MAGIC_COOKIE", "5c3e2dc2f6b7701f988703046fdbc24eb2e4689f3a81c6af1037d41b8eb063c8")
 	return &Clent{
