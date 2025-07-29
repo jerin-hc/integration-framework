@@ -6,12 +6,13 @@ import (
 	"github.com/hashicorp/go-plugin"
 	"github.com/jerin-hc/integration-framework/integration/jsoncodec"
 	"github.com/jerin-hc/integration-framework/integration/schema"
+	"github.com/jerin-hc/integration-framework/integration/tfgrpc"
+
 	"google.golang.org/grpc"
 )
 
 const (
-	grpcMaxMessageSize        = 256 << 20
-	protocolVersionMajor uint = 5
+	grpcMaxMessageSize = 256 << 20
 )
 
 type Server struct {
@@ -29,15 +30,11 @@ func (s *Server) HandleFunc(hander schema.IntegrationServer) {
 	s.hander = hander
 }
 
-func (s *Server) Run(integrationServer IntegrationServer) {
+func (s *Server) Run(integrationServer tfgrpc.IntegrationServer) {
 	serveConfig := &plugin.ServeConfig{
-		HandshakeConfig: plugin.HandshakeConfig{
-			ProtocolVersion:  protocolVersionMajor,
-			MagicCookieKey:   "TF_RUNTASK_MAGIC_COOKIE",
-			MagicCookieValue: "5c3e2dc2f6b7701f988703046fdbc24eb2e4689f3a81c6af1037d41b8eb063c8",
-		},
+		HandshakeConfig: tfgrpc.GetHandShakeConfig(),
 		Plugins: plugin.PluginSet{
-			"integration": &HandlerPlugin{
+			"integration": &tfgrpc.HandlerPlugin{
 				IntegrationServer: integrationServer,
 			},
 		},

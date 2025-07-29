@@ -1,4 +1,4 @@
-package server
+package tfgrpc
 
 import (
 	"context"
@@ -10,45 +10,53 @@ import (
 	"google.golang.org/grpc"
 )
 
+func GetHandShakeConfig() plugin.HandshakeConfig {
+	return plugin.HandshakeConfig{
+		ProtocolVersion:  5,
+		MagicCookieKey:   "TF_RUNTASK_MAGIC_COOKIE",
+		MagicCookieValue: "5c3e2dc2f6b7701f988703046fdbc24eb2e4689f3a81c6af1037d41b8eb063c8",
+	}
+}
+
 type HandlerPlugin struct {
 	IntegrationServer IntegrationServer
 }
 
-type IntegrationClient struct {
+type integrationClient struct {
 	cc *grpc.ClientConn
 }
 
-func (c *IntegrationClient) HandlePrePlan(ctx context.Context, req *schema.Request) (*schema.Response, error) {
+func (c *integrationClient) HandlePrePlan(ctx context.Context, req *schema.Request) (*schema.Response, error) {
 	resp := new(schema.Response)
 	err := c.cc.Invoke(ctx, "/IntegrationService/HandlePrePlan", req, resp, grpc.CallContentSubtype("json"))
 	return resp, err
 }
 
-func (c *IntegrationClient) HandlePostPlan(ctx context.Context, req *schema.Request) (*schema.Response, error) {
+func (c *integrationClient) HandlePostPlan(ctx context.Context, req *schema.Request) (*schema.Response, error) {
 	resp := new(schema.Response)
 	err := c.cc.Invoke(ctx, "/IntegrationService/HandlePostPlan", req, resp, grpc.CallContentSubtype("json"))
 	return resp, err
 }
 
-func (c *IntegrationClient) HandlePreApply(ctx context.Context, req *schema.Request) (*schema.Response, error) {
+func (c *integrationClient) HandlePreApply(ctx context.Context, req *schema.Request) (*schema.Response, error) {
 	resp := new(schema.Response)
 	err := c.cc.Invoke(ctx, "/IntegrationService/HandlePreApply", req, resp, grpc.CallContentSubtype("json"))
 	return resp, err
 }
 
-func (c *IntegrationClient) HandlePostApply(ctx context.Context, req *schema.Request) (*schema.Response, error) {
+func (c *integrationClient) HandlePostApply(ctx context.Context, req *schema.Request) (*schema.Response, error) {
 	resp := new(schema.Response)
 	err := c.cc.Invoke(ctx, "/IntegrationService/HandlePostApply", req, resp, grpc.CallContentSubtype("json"))
 	return resp, err
 }
 
-func (c *IntegrationClient) HandleTest(ctx context.Context, req *schema.Request) (*schema.Response, error) {
+func (c *integrationClient) HandleTest(ctx context.Context, req *schema.Request) (*schema.Response, error) {
 	resp := new(schema.Response)
 	err := c.cc.Invoke(ctx, "/IntegrationService/HandleTest", req, resp, grpc.CallContentSubtype("json"))
 	return resp, err
 }
 
-func (c *IntegrationClient) Trigger(ctx context.Context, req *schema.Request) (*schema.Response, error) {
+func (c *integrationClient) Trigger(ctx context.Context, req *schema.Request) (*schema.Response, error) {
 	resp := new(schema.Response)
 	err := c.cc.Invoke(ctx, "/IntegrationService/Trigger", req, resp, grpc.CallContentSubtype("json"))
 	return resp, err
@@ -60,7 +68,7 @@ func (p *HandlerPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) er
 }
 
 func (p *HandlerPlugin) GRPCClient(ctx context.Context, broker *plugin.GRPCBroker, cc *grpc.ClientConn) (any, error) {
-	return &IntegrationClient{cc: cc}, nil
+	return &integrationClient{cc: cc}, nil
 }
 
 func (p *HandlerPlugin) Server(*plugin.MuxBroker) (interface{}, error) {
