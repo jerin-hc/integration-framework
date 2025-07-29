@@ -34,7 +34,7 @@ func InitDevelop(path string) *Clent {
 	}
 }
 
-func (s *Clent) RunTask(ctx context.Context, event schema.Event, integrationPlugin string) (*schema.Response, error) {
+func (s *Clent) RunTask(ctx context.Context, event schema.Event, req *schema.Request, integrationPlugin string) (*schema.Response, error) {
 	pluginPath := fmt.Sprintf(s.path, integrationPlugin)
 
 	var resp *schema.Response
@@ -64,10 +64,6 @@ func (s *Clent) RunTask(ctx context.Context, event schema.Event, integrationPlug
 
 	if !ok {
 		log.Panic("invalid IntegrationClient")
-	}
-
-	req := &schema.Request{
-		Resources: nil,
 	}
 
 	switch event {
