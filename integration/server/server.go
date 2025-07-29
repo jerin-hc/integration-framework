@@ -29,7 +29,7 @@ func (s *Server) HandleFunc(hander schema.IntegrationServer) {
 	s.hander = hander
 }
 
-func (s *Server) Run(integrationServer *IntegrationServer) {
+func (s *Server) Run(integrationServer IntegrationServer) {
 	serveConfig := &plugin.ServeConfig{
 		HandshakeConfig: plugin.HandshakeConfig{
 			ProtocolVersion:  protocolVersionMajor,
@@ -38,7 +38,7 @@ func (s *Server) Run(integrationServer *IntegrationServer) {
 		},
 		Plugins: plugin.PluginSet{
 			"integration": &HandlerPlugin{
-				IntegrationServer: *integrationServer,
+				IntegrationServer: integrationServer,
 			},
 		},
 		GRPCServer: func(opts []grpc.ServerOption) *grpc.Server {
