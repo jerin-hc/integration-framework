@@ -14,13 +14,43 @@ type HandlerPlugin struct {
 	IntegrationServer IntegrationServer
 }
 
-type integrationClient struct {
+type IntegrationClient struct {
 	cc *grpc.ClientConn
 }
 
-func (c *integrationClient) Handle(ctx context.Context, req *schema.Request) (*schema.Response, error) {
+func (c *IntegrationClient) HandlePrePlan(ctx context.Context, req *schema.Request) (*schema.Response, error) {
 	resp := new(schema.Response)
-	err := c.cc.Invoke(ctx, "/IntegrationService/Handle", req, resp, grpc.CallContentSubtype("json"))
+	err := c.cc.Invoke(ctx, "/IntegrationService/HandlePrePlan", req, resp, grpc.CallContentSubtype("json"))
+	return resp, err
+}
+
+func (c *IntegrationClient) HandlePostPlan(ctx context.Context, req *schema.Request) (*schema.Response, error) {
+	resp := new(schema.Response)
+	err := c.cc.Invoke(ctx, "/IntegrationService/HandlePostPlan", req, resp, grpc.CallContentSubtype("json"))
+	return resp, err
+}
+
+func (c *IntegrationClient) HandlePreApply(ctx context.Context, req *schema.Request) (*schema.Response, error) {
+	resp := new(schema.Response)
+	err := c.cc.Invoke(ctx, "/IntegrationService/HandlePreApply", req, resp, grpc.CallContentSubtype("json"))
+	return resp, err
+}
+
+func (c *IntegrationClient) HandlePostApply(ctx context.Context, req *schema.Request) (*schema.Response, error) {
+	resp := new(schema.Response)
+	err := c.cc.Invoke(ctx, "/IntegrationService/HandlePostApply", req, resp, grpc.CallContentSubtype("json"))
+	return resp, err
+}
+
+func (c *IntegrationClient) HandleTest(ctx context.Context, req *schema.Request) (*schema.Response, error) {
+	resp := new(schema.Response)
+	err := c.cc.Invoke(ctx, "/IntegrationService/HandleTest", req, resp, grpc.CallContentSubtype("json"))
+	return resp, err
+}
+
+func (c *IntegrationClient) Trigger(ctx context.Context, req *schema.Request) (*schema.Response, error) {
+	resp := new(schema.Response)
+	err := c.cc.Invoke(ctx, "/IntegrationService/Trigger", req, resp, grpc.CallContentSubtype("json"))
 	return resp, err
 }
 
@@ -30,7 +60,7 @@ func (p *HandlerPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) er
 }
 
 func (p *HandlerPlugin) GRPCClient(ctx context.Context, broker *plugin.GRPCBroker, cc *grpc.ClientConn) (any, error) {
-	return &integrationClient{cc: cc}, nil
+	return &IntegrationClient{cc: cc}, nil
 }
 
 func (p *HandlerPlugin) Server(*plugin.MuxBroker) (interface{}, error) {
