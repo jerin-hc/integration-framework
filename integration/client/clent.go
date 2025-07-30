@@ -43,7 +43,7 @@ func (c *Clent) RunTask(ctx context.Context, req *schema.Request, integrationPlu
 
 	f := isExecutable(pluginPath)
 
-	if f {
+	if !f {
 		return &schema.Response{
 			Comment: schema.Comment{
 				Pass:    false,
