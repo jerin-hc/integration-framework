@@ -41,6 +41,17 @@ func (c *Clent) RunTask(ctx context.Context, req *schema.Request, integrationPlu
 	var resp *schema.Response
 	var err error
 
+	f := isExecutable(pluginPath)
+
+	if f {
+		return &schema.Response{
+			Comment: schema.Comment{
+				Pass:    false,
+				Message: fmt.Sprintf("%v plugin not found", integrationPlugin),
+			},
+		}, nil
+	}
+
 	pluginMap := map[string]plugin.Plugin{
 		"integration": &tfgrpc.HandlerPlugin{},
 	}
@@ -83,4 +94,17 @@ func (c *Clent) RunTask(ctx context.Context, req *schema.Request, integrationPlu
 	}
 
 	return resp, err
+}
+
+func isExecutable(path string) bool {
+	info, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	if info.IsDir() {
+		return false
+	}
+
+	mode := info.Mode()
+	return mode&0111 != 0
 }
