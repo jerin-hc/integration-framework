@@ -34,8 +34,9 @@ func InitDevelop(path string) *Clent {
 	}
 }
 
-func (s *Clent) RunTask(ctx context.Context, event schema.Event, req *schema.Request, integrationPlugin string) (*schema.Response, error) {
-	pluginPath := fmt.Sprintf(s.path, integrationPlugin)
+func (c *Clent) RunTask(ctx context.Context, req *schema.Request, integrationPlugin string) (*schema.Response, error) {
+	log.Printf("RunTask received: %v", req)
+	pluginPath := fmt.Sprintf(c.path, integrationPlugin)
 
 	var resp *schema.Response
 	var err error
@@ -65,22 +66,16 @@ func (s *Clent) RunTask(ctx context.Context, event schema.Event, req *schema.Req
 	if !ok {
 		log.Panic("invalid IntegrationClient")
 	}
-
-	switch event {
+	switch req.Event {
 	case schema.PrePlan:
-		req.Event = schema.PrePlan
 		resp, err = integration.HandlePrePlan(ctx, req)
 	case schema.PostPlan:
-		req.Event = schema.PostPlan
 		resp, err = integration.HandlePostPlan(ctx, req)
 	case schema.PreApply:
-		req.Event = schema.PreApply
 		resp, err = integration.HandlePreApply(ctx, req)
 	case schema.PostApply:
-		req.Event = schema.PostApply
 		resp, err = integration.HandlePostApply(ctx, req)
 	case schema.Test:
-		req.Event = schema.Test
 		resp, err = integration.HandleTest(ctx, req)
 	default:
 		resp = nil
