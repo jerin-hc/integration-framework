@@ -14,15 +14,17 @@ import (
 )
 
 type Clent struct {
-	Ctx  schema.Ctx
-	path string
+	Ctx    schema.Ctx
+	path   string
+	logger *log.Logger
 }
 
 func Init() *Clent {
 	jsoncodec.Init()
 	os.Setenv("TF_RUNTASK_MAGIC_COOKIE", "5c3e2dc2f6b7701f988703046fdbc24eb2e4689f3a81c6af1037d41b8eb063c8")
 	return &Clent{
-		path: "/home/tfc-agent/integration/terraform-%v",
+		path:   "/home/tfc-agent/integration/terraform-%v",
+		logger: log.New(os.Stderr, "[integration-framework] ", log.LstdFlags),
 	}
 }
 
@@ -35,7 +37,7 @@ func InitDevelop(path string) *Clent {
 }
 
 func (c *Clent) RunTask(ctx context.Context, req *schema.Request, integrationPlugin string) (*schema.Response, error) {
-	log.Printf("RunTask received: %v", req)
+	c.logger.Panicf("RunTask received: %v\n", req)
 	pluginPath := fmt.Sprintf(c.path, integrationPlugin)
 
 	var resp *schema.Response
@@ -53,18 +55,18 @@ func (c *Clent) RunTask(ctx context.Context, req *schema.Request, integrationPlu
 	})
 	rpcClient, err := pluginClient.Client()
 	if err != nil {
-		log.Panic(err)
+		c.logger.Panic(err)
 	}
 
 	raw, err := rpcClient.Dispense("integration")
 	if err != nil {
-		log.Panic(err)
+		c.logger.Panic(err)
 	}
 
 	integration, ok := raw.(tfgrpc.IntegrationServer)
 
 	if !ok {
-		log.Panic("invalid IntegrationClient")
+		c.logger.Panic("invalid IntegrationClient")
 	}
 	switch req.Event {
 	case schema.PrePlan:
