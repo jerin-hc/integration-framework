@@ -16,32 +16,32 @@ const (
 )
 
 type Resource struct {
-	Type     string
-	Identity string
+	Type     string `json:"type"`
+	Identity string `json:"identity"`
 }
 
 type Response struct {
-	Resources []ResourceChange
-	Comment   Comment
+	Resources []ResourceChange `json:"resources"`
+	Comment   Comment          `json:"comment"`
 }
 
 type Request struct {
-	Event     Event
-	Resources []Resource
+	Event     Event      `json:"event"`
+	Resources []Resource `json:"resources"`
 }
 
 type Ctx context.Context
 
 type Comment struct {
-	Pass    bool
-	Message string
+	Pass    bool   `json:"pass"`
+	Message string `json:"message"`
 }
 
 type ResourceChange struct {
-	Identity   string
-	Mutate     map[string]interface{}
-	Annotation map[string]interface{}
-	Comment    Comment
+	Identity   string                 `json:"identity"`
+	Mutate     map[string]interface{} `json:"mutate"`
+	Annotation map[string]interface{} `json:"annotation"`
+	Comment    Comment                `json:"comment"`
 }
 
 type RunTaskHandler struct {
